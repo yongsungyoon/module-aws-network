@@ -143,3 +143,44 @@ resource "aws_nat_gateway" "nat-gw-b" {
     "Name" = "${local.vpc_name}-NAT-gw-b"
   }
 }
+
+## Private Routes
+resource "aws_route_table" "private-route-a" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat-gw-a.id
+  }
+
+  tags = {
+    "Name" = "${local.vpc_name}-private-route-a"
+  }
+}
+
+resource "aws_route_table" "private-route-b" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat-gw-b.id
+  }
+
+  tags = {
+    "Name" = "${local.vpc_name}-private-route-b"
+  }
+}
+
+resource "aws_route_table_association" "private-a-association" {
+  subnet_id = aws_subnet.private-subnet-a.id
+  route_table_id = aws_route_table.private-route-a.id
+}
+
+resource "aws_route_table_association" "private-b-association" {
+  subnet_id = aws_subnet.private-subnet-b.id
+  route_table_id = aws_route_table.private-route-b.id  
+}
+
+
+
+
+
+
